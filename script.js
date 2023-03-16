@@ -26,7 +26,7 @@ buttons.forEach((btn) => {
 
       // Check if the expression is valid and evaluate it
       const expression = realTimeScreenValue.join('');
-      if (/^\d+[+\-*/]\d+$/.test(expression)) {
+      if (/^-?\d+(\.\d+)?([+\-*\/]\d+(\.\d+)?)*$/.test(expression)) {
         const result = evaluateExpression(expression);
        
       }
@@ -48,7 +48,7 @@ buttons.forEach((btn) => {
 // Evaluate the expression on the screen and update the answer
 function evaluateExpressionOnScreen() {
   const expression = realTimeScreenValue.join('');
-  if (/^\d+[+\-*/]\d+$/.test(expression)) {
+  if (/^-?\d+(\.\d+)?([+\-*\/]\d+(\.\d+)?)*$/.test(expression)) {
     const result = evaluateExpression(expression);
     realTimeScreenValue = [result.toString()];
     currentInput.innerHTML = result.toString();
@@ -61,7 +61,7 @@ function evaluateExpression(expression) {
     expression = '0' + expression;
   }
   const operands = expression.split(/[-+/*]/g).map(parseFloat);
-  const operators = expression.split(/[0-9]+/g).filter(Boolean);
+  const operators = expression.split(/[0-9\.]+/g).filter(Boolean);
 
   let result = operands[0];
   for (let i = 0; i < operators.length; i++) {
