@@ -92,7 +92,6 @@ function evaluateExpression(expression) {
   }
   return result;
  }
-console.log(evaluateExpression('10%'))
 // Reset the calculator
 function resetCalculator() {
   realTimeScreenValue = [''];
