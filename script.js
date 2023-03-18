@@ -39,7 +39,7 @@ buttons.forEach((btn) => {
     // Handle the erase button
     if (btnId.match('erase')) {
       realTimeScreenValue.pop();
-      currentInput.innerHTML = realTimeScreenValue.join('')+ '%';
+      currentInput.innerHTML = realTimeScreenValue.join('');
       evaluateExpressionOnScreen();
     }
   });
