@@ -68,7 +68,16 @@ body{
     outline: none;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
+#clear{
+    background-color: rgb(209, 86, 77);
+}
+#erase{
+    background-color: rgba(255, 66, 8, 0.623);
+}
 
+#evaluate{
+    background-color: rgba(63, 235, 177, 0.74);
+}
 .keypad-btns .fun_btn{
     color: rgb(0, 0, 0);
     background: rgb(243, 241, 241);
