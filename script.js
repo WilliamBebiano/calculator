@@ -1,122 +1,183 @@
-// Get the DOM elements
-const currentInput = document.querySelector('.currentInput');
-const buttons = document.querySelectorAll('button');
-const eraseBtn = document.querySelector('#erase');
-const clearBtn = document.querySelector('#clear');
-const evaluateBtn = document.querySelector('#evaluate');
-const percentBtn = document.querySelector('#percent');
+const buttons = document.querySelectorAll("button");
+const display = document.getElementById("currentInput");
+const n1 = document.getElementById("n1");
+const op = document.getElementById("op");
+const n2 = document.getElementById("n2");
+const rs = document.getElementById("result");
 
-
-// Initialize the screen value
-let realTimeScreenValue = [''];
-
-// Add event listeners to the buttons
-clearBtn.addEventListener('click', () => {
-  resetCalculator();
+const operate = {
+  firstNumber: "",
+  operation: "",
+  secondNumber: "",
+  result: "",
+};
+buttons.forEach((button) => {
+  switch (button.classList.value) {
+    case "operator":
+      button.addEventListener("click", operation);
+      break;
+    case "clear":
+      button.addEventListener("click", clear);
+      break;
+    case "backspace":
+      button.addEventListener("click", backspace);
+      break;
+    case "calculate":
+      button.addEventListener("click", calculate);
+      break;
+    case "digit":
+      button.addEventListener("click", digit);
+      break;
+    case "floatpoint":
+      button.addEventListener("click", floatPoint);
+      break;
+    default:
+      break;
+  }
 });
 
-buttons.forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const btnId = btn.id;
-    const btnValue = btn.value;
-
-    // Handle number and operator buttons
-    if (!btnId.match('erase')) {
-      // Add the button value to the screen
-      realTimeScreenValue.push(btnValue);
-      currentInput.innerHTML = realTimeScreenValue.join('');
-
-      // Check if the expression is valid and evaluate it
-      const expression = realTimeScreenValue.join('');
-      if (/^-?\d+(\.\d+)?([+\-*\/%]\d+(\.\d+)?)*$/.test(expression)) {
-
-      }
-      // Evaluate the expression when the equals button is pressed
-      if (btnId.match('evaluate')) {
-        evaluateExpressionOnScreen();
-      }
-    }
-    // Handle the erase button
-    if (btnId.match('erase')) {
-      realTimeScreenValue.pop();
-      currentInput.innerHTML = realTimeScreenValue.join('');
-      evaluateExpressionOnScreen();
-    }
-  });
-});
-
-
-// Evaluate the expression on the screen and update the answer
-function evaluateExpressionOnScreen() {
-  const expression = realTimeScreenValue.join('');
-  if (/^-?\d+(\.\d+)?([+\-*\/%]\d+(\.\d+)?)*$/.test(expression)) {
-    const result = evaluateExpression(expression);
-    realTimeScreenValue = [result.toString()];
-    currentInput.innerHTML = result.toString();
-  }
-}
-
-
-// Evaluate a mathematical expression and return the result
-function evaluateExpression(expression) {
-  if (expression.startsWith('-')) {
-    expression = '0' + expression;
-  }
-  const operands = expression.split(/[-+/*%]/g).map(parseFloat);
-  const operators = expression.split(/[0-9\.]+/g).filter(Boolean);
-
-  let result = operands[0];
-
-  for (let i = 0; i < operators.length; i++) {
-    const operator = operators[i];
-    const operand = operands[i + 1];
-    switch (operator) {
-      case '+':
-        result += operand;
-        break;
-      case '-':
-        result -= operand;
-        break;
-      case '*':
-        result *= operand;
-        break;
-      case '/':
-        result /= operand;
-        break;
-      case '%':
-        result /= 100;
-        break;
-      default:
-        break;
-    }
-  }
-  return result;
- }
-// Reset the calculator
-function resetCalculator() {
-  realTimeScreenValue = [''];
-  currentInput.innerHTML = '';
+function clear() {
+  operate.firstNumber = "";
+  operate.operation = "";
+  operate.secondNumber = "";
+  operate.result = "";
+  n1.innerHTML = "";
+  op.innerHTML = "";
+  n2.innerHTML = "";
+  
   
 }
 
-// Handle keyboard input
-document.addEventListener('keydown', (event) => {
-  const key = event.key;
-  const allowedKeys = [
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    '+', '-', '*', '/', '.', '=', 'Enter', 'Backspace', 'Delete'
-  ];
-  if (allowedKeys.includes(key)) {
-    const btn = document.querySelector(`button[value="${key}"]`);
-    if (btn) {
-      btn.click();
-    }
-    if (key === 'Enter') {
-      evaluateBtn.click();
-    }
-    if (key === 'Backspace' || key === 'Delete') {
-      eraseBtn.click();
-    }
+function floatPoint() {
+  switch (true) {
+    case operate.firstNumber === "" ||
+      (operate.secondNumber === "" && operate.operation !== ""):
+      info.innerHTML= "Enter a number first";
+      break;
+    case operate.firstNumber !== "" &&
+      !operate.firstNumber.includes(".") &&
+      operate.operation === "":
+      operate.firstNumber += ".";
+      break;
+    case operate.firstNumber !== "" &&
+      operate.operation !== "" &&
+      !operate.secondNumber.includes("."):
+      operate.secondNumber += ".";
+      break;
+    default:
+      
+      break;
   }
+  writeData();
+}
 
-});
+function backspace() {
+  if (operate.secondNumber !== "") {
+    operate.secondNumber = operate.secondNumber.substring(
+      0,
+      operate.secondNumber.length - 1
+    );
+  } else if (operate.secondNumber === "" && operate.operation !== "") {
+    operate.operation = "";
+  } else if (operate.firstNumber !== "" && operate.operation === "") {
+    operate.firstNumber = operate.firstNumber.substring(
+      0,
+      operate.firstNumber.length - 1
+    );
+  }
+  writeData();
+}
+
+function calculate() {
+  if (
+    operate.operation === "" ||
+    operate.firstNumber === "" ||
+    operate.secondNumber === ""
+  ) {
+    n1.innerHTML = "please provide a full operation";
+    return;
+  }
+  nb1 = parseFloat(operate.firstNumber);
+  if (operate.firstNumber.includes("-")) {
+    nb1 = -Math.abs(nb1);
+  }
+  nb2 = parseFloat(operate.secondNumber);
+  if (operate.secondNumber.includes("-")) {
+    nb2 = -Math.abs(nb2);
+  }
+  switch (operate.operation) {
+    case "*":
+      operate.result = nb1 * nb2;
+      break;
+    case "/":
+      if (nb2 === 0) {
+        alert("can't divide by 0");
+      }
+      operate.result = nb1 / nb2;
+      break;
+    case "+":
+      operate.result = nb1 + nb2;
+      break;
+    case "-":
+      operate.result = nb1 - nb2;
+      break;
+    default:
+      break;
+  }
+  writeResult();
+}
+
+function digit(e) {
+  switch (true) {
+    case operate.operation === "":
+      if (e.target.textContent === "0" && operate.firstNumber === "0") {
+        return;
+      }
+      operate.firstNumber += e.target.textContent;
+      break;
+    case operate.operation !== "" && operate.operation !== NaN:
+      operate.secondNumber += e.target.textContent;
+    default:
+      break;
+  }
+  writeData();
+}
+
+function operation(e) {
+  switch (true) {
+    case e.target.className === "operator" &&
+      operate.firstNumber !== "" &&
+      operate.secondNumber === "":
+      operate.operation = e.target.textContent;
+      break;
+    case e.target.className === "operator" &&
+      operate.firstNumber !== "" &&
+      operate.secondNumber !== "":
+      calculate();
+      operate.operation = e.target.textContent;
+      break;
+    default:
+      break;
+  }
+  writeData();
+}
+
+function writeData() {
+  n1.innerHTML = operate.firstNumber;
+  n2.innerHTML = operate.secondNumber;
+  op.innerHTML = operate.operation;
+}
+
+function writeResult() {
+  let result = operate.result;
+  if (operate.firstNumber.includes(".") || operate.secondNumber.includes(".")) {
+    result = parseFloat(operate.result).toFixed(3);
+    n1.innerHTML = result;
+  } else {
+    n1.innerHTML = result;
+  }
+  clear();
+  n1.innerHTML = result;
+  operate.firstNumber += result;
+  
+}
